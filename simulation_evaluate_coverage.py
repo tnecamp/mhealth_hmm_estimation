@@ -251,7 +251,7 @@ a_reparam_store
 
 # Compare variance of MLE_hat to estimated variance of MLE_hat
 var(MLE_hat-true_MLE)
-mean(MLE_var)
+#mean(MLE_var)
 
 ## Bias of MLE_hat
 mean(MLE_hat-true_MLE)
