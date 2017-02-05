@@ -7,7 +7,6 @@
 
 ## double check gamma and normal pdfs
 ## double check hessian inverse stuff
-## Figure out why the optimization isn't working right?
 
 import numpy as np
 from scipy.stats import multivariate_normal
