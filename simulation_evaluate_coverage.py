@@ -7,7 +7,7 @@
 
 ## double check gamma and normal pdfs
 ## double check hessian inverse stuff
-
+## Figure out why the optimization isn't working right?
 
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -78,7 +78,7 @@ def meta_model_optimization(a_init, b_init, c_reparam, x_star, y_star, x_star_sd
 	
 	
 	init_array = np.array([np.log(-a_init), b_init])
-	optim_sol = minimize(optim_fun2, x0 = init_array, method = 'BFGS')
+	optim_sol = minimize(optim_fun2, x0 = init_array, method = 'Nelder-Mead')
 	return(optim_sol)
 
 
@@ -183,24 +183,24 @@ for k in range(coverage_iter_number):
 	a_reparam = optimized_parameters.x[0]
 	a = -np.exp(a_reparam)
 	b = optimized_parameters.x[1]
-	information_inv_est = optimized_parameters.hess_inv	## keep this positive since I minimized the negative log likelihood
+	#information_inv_est = optimized_parameters.hess_inv	## keep this positive since I minimized the negative log likelihood
 
 	### Storage of values and finding new cut offs for our profile likelihood ###
 	
 	MLE_hat.append(-b/(2*a))		# Store estimate of MLE based on PL
 	grad_mle = np.array([-b/(2*np.exp(a_reparam)), 1/(2*np.exp(a_reparam))])
-	cur_inv = information_inv_est		# get error estimates of parameters based on hessian
-	cur_MLE_var = grad_mle.dot(cur_inv).dot(grad_mle)	# get estimate of MLE variance
-	MLE_var.append(cur_MLE_var)	# store MLE variance estimate
+	#cur_inv = information_inv_est		# get error estimates of parameters based on hessian
+	#cur_MLE_var = grad_mle.dot(cur_inv).dot(grad_mle)	# get estimate of MLE variance
+	#MLE_var.append(cur_MLE_var)	# store MLE variance estimate
 	a_store.append(a)		# store curvaturue
 	b_store.append(b)		# store b value in quadratice
-	a_reparam_store.append(a_reparam)
-	a_var_store.append(np.exp(-2*a_reparam)*cur_inv[0,0])	# variance in a estimate
-	b_var_store.append(cur_inv[1,1])	# variance in b estimate
-	a_reparam_var_store.append(cur_inv[0,0])		# variance in reparameterized a
+	#a_reparam_store.append(a_reparam)
+	#a_var_store.append(np.exp(-2*a_reparam)*cur_inv[0,0])	# variance in a estimate
+	#b_var_store.append(cur_inv[1,1])	# variance in b estimate
+	#a_reparam_var_store.append(cur_inv[0,0])		# variance in reparameterized a
 	
 	## obtain new profile likelihood cutoff based on estimated PL
-	new_cut_off = y_star_max - 1.92 - 3.84*(-a)*max(cur_MLE_var,0)  # Tim double check this should be y_star_max vs mle_like
+	new_cut_off = y_star_max - 1.92  # Tim double check this should be y_star_max vs mle_like
 	
 	
 	L_vec_noise_cur =  -np.sqrt((new_cut_off - (c_reparam+y_star_max)) / a ) - b/(2*a)		# New estimated lower bound
@@ -246,9 +246,9 @@ MLE_var
 a_store 
 b_store
 a_reparam_store
-a_var_store
-b_var_store
-a_reparam_var_store
+#a_var_store
+#b_var_store
+#a_reparam_var_store
 
 # Compare variance of MLE_hat to estimated variance of MLE_hat
 var(MLE_hat-true_MLE)
@@ -261,6 +261,5 @@ mean(MLE_hat-true_MLE)
 
 #which(!(U_vec_noise > 5.2 & L_vec_noise < 5.2))
 
-sum(np.logical_and(true_U > 5.2, true_L < 5.2))
-sum(np.logical_and(U_vec_noise > 5.2, L_vec_noise < 5.2))
-
+#sum(np.logical_and(true_U > 5.2, true_L < 5.2))
+#sum(np.logical_and(U_vec_noise > 5.2, L_vec_noise < 5.2))
