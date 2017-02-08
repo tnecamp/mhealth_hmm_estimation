@@ -57,7 +57,7 @@ def data_generator(n, mu, sigma):
 	return_dict['true_L'] = true_L_cur
 	return_dict['true_U'] = true_U_cur
 
-	return(return_dict)
+	return return_dict
 
 
 def estimation_points(data_mean, sigma, n, sample, t_g):
@@ -79,7 +79,7 @@ def estimation_points(data_mean, sigma, n, sample, t_g):
 	return_dict['epsilon_sd'] = np.std(epsilon_vec)	# Get estimate of horizontal error. Note this should change since it's based on unknown truth 
 	return_dict['sum_epsilon'] = sum(epsilon_vec)
 
-	return(return_dict)
+	return return_dict
 
 
 ### Define optimization function to get estimate of profile likelihood ###
@@ -108,7 +108,7 @@ def meta_model_optimization(a_init, b_init, c_reparam, x_star, y_star, x_star_sd
 			like_x_star = norm.pdf(mcmc_sample-x_star[j], loc = 0, scale = x_star_sd)
 			cur_sum = cur_sum + np.log(1/mcmc_sample_size*sum(like_y_star*like_x_star))
 		
-		return(cur_sum)
+		return cur_sum
 	
 
 	## Within this I reparameterize to allow the optimization to not have any constraints, also prevents 
@@ -116,12 +116,12 @@ def meta_model_optimization(a_init, b_init, c_reparam, x_star, y_star, x_star_sd
 	def optim_fun2(arg_vec):
 		a = -np.exp(arg_vec[0])
 		b = arg_vec[1]
-		return(-full_log_likelihood_alpha(a, b, c_reparam))
+		return -full_log_likelihood_alpha(a, b, c_reparam)
 	
 	
 	init_array = np.array([np.log(-a_init), b_init])
 	optim_sol = minimize(optim_fun2, x0 = init_array, method = 'Nelder-Mead')
-	return(optim_sol)
+	return optim_sol
 
 
                                  	
@@ -239,18 +239,18 @@ def main():
 		# Add in plotting?
 		
 		## Print the iteration
-		print(k)
+		print k
 
 
 	## write the valid file in tab delimited format
-	print("Noisy Upper Bound")
-	print(U_vec_noise)
-	print("True Upper Bound")
-	print(true_U)
-	print("Noisy Lower Bound")
-	print(L_vec_noise)
-	print("True Lower Bound")
-	print(true_L)
+	print "Noisy Upper Bound"
+	print U_vec_noise
+	print "True Upper Bound"
+	print true_U
+	print "Noisy Lower Bound"
+	print L_vec_noise
+	print "True Lower Bound"
+	print true_L
 
 # Standard boilerplate to call the main() function.
 if __name__ == '__main__':
